@@ -47,11 +47,22 @@ Endorsements$candidate_name<-recode(Endorsements$candidate_name, 'Bernie Sanders
 Endorsements$candidate_name<-recode(Endorsements$candidate_name, 'Joe Biden'='Joseph R. Biden Jr.')
 polls.endorsements <- polls %>%
   inner_join(Endorsements,by="candidate_name")
+candidates<-unique(polls.endorsements$candidate_name)
 unique(polls.endorsements$candidate_name) #shows only 5 candidates
-polls.endorsements <- polls.endorsements %>%
-  mutate(endorsements.count=unique(polls.endorsements$endorser))
-
-  
+#But, this dataset is clearly wrong because for each candidate's endorser appears for every poll
+#Given this flaw in the joined data set, I will calculate the number of endorsements from the Endorsements dataset, not the joined one
+Endorsements <- Endorsements %>%
+  group_by(candidate_name) %>%
+  mutate(endorsements.count=n())
+plot.table <- Endorsements %>%
+  filter(candidate_name%in%candidates) %>%
+  group_by(candidate_name) %>%
+  summarise(count=n())
+p<- ggplot(data=plot.table)+
+  geom_point(mapping=aes(x=candidate_name,y=count,size=.8))+
+  scale_y_continuous(name="# of Endorsements",limits=c(0,50))
+p+theme_dark()
+p+xlab("Candidate Name")+labs(title="Endorsements of Candidates")+theme_classic()
 
 
 #Text as Data exercises
