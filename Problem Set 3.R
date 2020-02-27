@@ -1,6 +1,6 @@
 #ggplot2 exercises
 
-#Problem 1 - 2/11 - INCOMPLETE
+#Problem 1 - 2/11 - COMPLETE
 library(ggplot2)
 primaryPolls<-read.csv('https://jmontgomery.github.io/PDS/Datasets/president_primary_polls_feb2020.csv', stringsAsFactors = F)
 primaryPolls$start_date<-as.Date(primaryPolls$start_date, "%m/%d/%Y")
@@ -9,26 +9,27 @@ primaryPolls<-primaryPolls[primaryPolls$candidate_name%in%c("Amy Klobuchar", "Be
 ggplot(data=primaryPolls)+
   geom_smooth(mapping = aes(x=start_date, y=pct, color=candidate_name)) + 
   geom_point(mapping = aes(x=start_date, y=pct, color=candidate_name), alpha=.4) +
-  facet_wrap(~ state, nrow=4) +xlim("%m/%d/%Y")
+  facet_wrap(~state, nrow=4) +
+  theme_minimal() + xlab("Date of Survey") + ylab("Percent of Vote")+guides(fill = guide_legend(title = "Candidate Name"))
 
-#Problem 2 - 2/13 - INCOMPLETE
-#Q: should we use the filter in the prev exercise? or just simply have one candidate-state dyad
+#Problem 2 - 2/13 - COMPLETE
 library(dplyr)
 library(tidyr)
 library(readr)
 primaryPolls<-read_csv('https://jmontgomery.github.io/PDS/Datasets/president_primary_polls_feb2020.csv')
 primaryPolls$start_date<-as.Date(primaryPolls$start_date, "%m/%d/%y")
-primaryPolls<-primaryPolls[primaryPolls$candidate_name%in%c("Amy Klobuchar", "Bernard Sanders", "Elizabeth Warren", "Joseph R. Biden Jr.", "Michael Bloomberg", "Pete Buttigieg","Tom Steyer"),]
-candidate.state.dyad <- primaryPolls %>%
+primaryPolls.subcand<-primaryPolls[primaryPolls$candidate_name%in%c("Amy Klobuchar", "Bernard Sanders", "Elizabeth Warren", "Joseph R. Biden Jr.", "Michael Bloomberg", "Pete Buttigieg","Tom Steyer"),]
+candidate.state.dyad <- primaryPolls.subcand %>%
   group_by(candidate_name, state) %>%
   summarise(average_candidate=mean(pct), count=n())
 object.size(primaryPolls)
+object.size(primaryPolls.subcand)
 object.size(candidate.state.dyad)
-#20512 in slimmed dataset compared to 1575128 bytes
+#20512 in slimmed dataset compared to the original 4333880 bytes and the subsetted 1575128 bytes
 
 #tidyverse exercises
 
-#Problem 3 - INCOMPLETE
+#Problem 3 - COMPLETE
 library(fivethirtyeight)
 library(tidyverse)
 polls <- read_csv('https://jmontgomery.github.io/PDS/Datasets/president_primary_polls_feb2020.csv')
